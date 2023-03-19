@@ -15,6 +15,6 @@ int main()
     cout << *cptr << endl;
     cout << cptr+8 << endl;
     
-
+    cout << "One done" << endl;
     return 0;
 }
