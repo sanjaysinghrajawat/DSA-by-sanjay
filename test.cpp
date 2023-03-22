@@ -1,24 +1,34 @@
 #include <iostream>
+#include <string>
 using namespace std;
 
-void printCounting(int n)
+bool findChar(string str, int n, char key, int i)
 {
-    // base case
-    if (n == 0)
-        return;
+    if (i >= n)
+        return false;
 
-    // recursive call
-    cout << n << " "; 
-    printCounting(n - 1);
+    if (str[i] == key)
+        return true;
+
+    return findChar(str, n, key, i+1);
 }
 
 int main()
 {
-    int n;
-    cout << "Enter a Number :";
-    cin >> n;
+    string name = "sanjay";
+    int n = name.length();
+    char key = 'b';
 
-    printCounting(n);
+    bool found = findChar(name, n, key, 0);
+
+    if (found)
+    {
+        cout << "Present" << endl;
+    }
+    else
+    {
+        cout << "Absent" << endl;
+    }
 
     return 0;
 }
