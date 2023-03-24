@@ -2,33 +2,21 @@
 #include <string>
 using namespace std;
 
-bool findChar(string str, int n, char key, int i)
+void printDigit(int n)
 {
-    if (i >= n)
-        return false;
+    if(n == 0) return;
 
-    if (str[i] == key)
-        return true;
+    printDigit(n/10);
 
-    return findChar(str, n, key, i+1);
+    int digit = n % 10;
+    cout << digit << endl;
 }
 
 int main()
 {
-    string name = "sanjay";
-    int n = name.length();
-    char key = 'b';
+    int n = 456;
 
-    bool found = findChar(name, n, key, 0);
-
-    if (found)
-    {
-        cout << "Present" << endl;
-    }
-    else
-    {
-        cout << "Absent" << endl;
-    }
+    printDigit(n);
 
     return 0;
 }
