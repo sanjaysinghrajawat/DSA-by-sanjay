@@ -2,22 +2,25 @@
 #include <vector>
 using namespace std;
 
-vector<int> sortEmp(int empid[], int salary[], int n)
+
+// bubble sort
+vector<int> bubble_sortEmp(int empid[], int salary[], int n)
 {
+    int number_swap = 0;
+    int comparsion = 0;
+
     vector<int> ans;
     bool swapped;
 
-    int outerIteration = 0;
-    int innerIteration = 0;
     for (int i = 0; i < n - 1; i++)
     {
-        outerIteration++;
         swapped = false;
         for (int j = 0; j < n - i - 1; j++)
         {
-            innerIteration++;
+            comparsion++;
             if (salary[j] < salary[j + 1] || (salary[j] == salary[j + 1] && empid[j] < empid[j + 1]))
             {
+                number_swap++;
                 swap(empid[j], empid[j + 1]);
                 swap(salary[j], salary[j + 1]);
                 swapped = true;
@@ -32,23 +35,14 @@ vector<int> sortEmp(int empid[], int salary[], int n)
     {
         ans.push_back(empid[i]);
     }
-    cout << "Outer Iteration : " << outerIteration << endl;
-    cout << "Inner Iteration : " << innerIteration << endl;
-    return ans;
-}
 
-int main()
-{
-    int empid[] = {1, 4, 9, 6, 9};
-    int salary[] = {200, 900, 500, 900, 800};
-    int n = sizeof(empid) / sizeof(int);
-
-    vector<int> ans = sortEmp(empid, salary, n);
-
+    cout << "------- Bubble Sort -------" << endl;
+    cout << "Number of Swaps : " << number_swap << endl;
+    cout << "Number of Comparsions : " << comparsion << endl;
     for (auto i : ans)
     {
         cout << i << " ";
     }
-
-    return 0;
+    cout << endl;
+    return ans;
 }
