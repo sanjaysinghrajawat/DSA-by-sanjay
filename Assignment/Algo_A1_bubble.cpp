@@ -2,7 +2,6 @@
 #include <vector>
 using namespace std;
 
-
 // bubble sort
 vector<int> bubble_sortEmp(int empid[], int salary[], int n)
 {
@@ -45,4 +44,15 @@ vector<int> bubble_sortEmp(int empid[], int salary[], int n)
     }
     cout << endl;
     return ans;
+}
+
+int main()
+{
+    int empid[] = {1, 4, 9, 6, 9};
+    int salary[] = {200, 900, 500, 900, 800};
+    int n = sizeof(empid) / sizeof(int);
+
+    bubble_sortEmp(empid, salary, n);
+
+    return 0;
 }
