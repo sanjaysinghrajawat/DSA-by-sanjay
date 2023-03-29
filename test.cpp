@@ -136,17 +136,21 @@ int main()
     };
 
     cout << endl;
+    cout << "---------------------------------------------------" << endl;
     for (int i = 0; i < board.size(); i++)
-    {
+    {2nd 
         for (int j = 0; j < board[0].size(); j++)
         {
-            cout << board[i][j] << " ";
+            cout << board[i][j] << " | ";
         }
         cout << endl;
     }
+    cout << "---------------------------------------------------" << endl;
     cout << endl;
 
-    string word = "ydev";
+    string word;
+    cout << "Enter Word that you want to search in Grid" << endl;
+    cin >> word;
 
     // cout << exist(board, word) << endl;
     return 0;
