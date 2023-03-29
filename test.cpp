@@ -1,150 +1,153 @@
 #include <iostream>
-#include <fstream>
-#include <string>
 #include <vector>
-#include <algorithm>
+#include <stack>
+#include <cstring>
 using namespace std;
 
-struct Student
+// Backtracking search
+bool search(int index, int i, int j, vector<vector<char>> &board, string word)
 {
-    string name;
-    double height;
-};
+    // If all characters have been found, return true
+    if (index == word.size())
+    {
+        return true;
+    }
+    // If out of bounds, return false
+    if (i < 0 || j < 0 || i >= board.size() || j >= board[0].size())
+    {
+        return false;
+    }
 
-bool compareHeight(Student &s1, Student &s2)
-{
-    return s1.height < s2.height;
+    // Initialize ans to false
+    bool ans = false;
+    // If the current character matches, mark it and search in all directions
+    if (word[index] == board[i][j])
+    {
+        board[i][j] = '*';
+
+        ans = search(index + 1, i + 1, j, board, word) ||
+              search(index + 1, i, j + 1, board, word) ||
+              search(index + 1, i - 1, j, board, word) ||
+              search(index + 1, i, j - 1, board, word);
+
+        // Mark the character as unvisited
+        board[i][j] = word[index];
+    }
+
+    // Return ans
+    return ans;
 }
 
-void sortStudentsAndWriteToFile(vector<Student> &students, const string &filename)
+// Iterative search
+bool searchIterative(int index, int i, int j, vector<vector<char>> &board, string word)
 {
-    vector<Student> sortedStudents = students;
-    sort(sortedStudents.begin(), sortedStudents.end(), compareHeight);
+    // Get the dimensions of the board
+    int m = board[0].size();
+    int n = board.size();
 
-    ofstream outFile(filename);
-    if (outFile.is_open())
+    // Create a stack to hold the indices to visit
+    stack<pair<int, int>> st;
+    st.push({i, j});
+
+    // While the stack is not empty
+    while (!st.empty())
     {
-        for (auto &student : sortedStudents)
+        // Get the current indices
+        pair<int, int> curr = st.top();
+        st.pop();
+        i = curr.first;
+        j = curr.second;
+
+        // If all characters have been found, return true
+        if (index == word.size())
         {
-            outFile << student.name << " " << student.height << "\n";
+            return true;
         }
-        outFile.close();
-    }
-    else
-    {
-        cout << "Unable to open file.";
-        return;
-    }
-}
-
-vector<string> findTallStudentsLinear(vector<Student> &students, double minHeight)
-{
-    int iteration = 0;
-    vector<string> tallStudents;
-    for (auto &student : students)
-    {
-        iteration++;
-        if (student.height >= minHeight)
+        // If out of bounds, continue to the next iteration
+        if (i < 0 || j < 0 || i >= n || j >= m)
         {
-            tallStudents.push_back(student.name);
+            continue;
         }
+        // If the current character doesn't match, continue to the next iteration
+        if (word[index] != board[i][j])
+        {
+            continue;
+        }
+
+        // Mark the character as visited and push the adjacent indices to the stack
+        board[i][j] = '*';
+        st.push({i + 1, j});
+        st.push({i, j + 1});
+        st.push({i - 1, j});
+        st.push({i, j - 1});
+        index++;
     }
-    cout << "Iteration = " << iteration << endl;
-    return tallStudents;
+
+    // If all characters have not been found, return false
+    return false;
 }
 
-vector<string> findTallStudentsBinary(vector<Student> &students, double minHeight)
+bool exist(vector<vector<char>> &board, string word)
 {
-    // Sort the students by height in ascending order
-    vector<Student> sortedStudents = students;
-    sort(sortedStudents.begin(), sortedStudents.end(), compareHeight);
+    int m = board[0].size();
+    int n = board.size();
+    int index = 0;
+    bool ans = false;
 
-    int iteration = 0;
-    vector<string> tallStudents;
-    int left = 0;
-    int right = sortedStudents.size() - 1;
-    while (left <= right)
+    for (int i = 0; i < n; i++)
     {
-        iteration++;
-        int mid = (left + right) / 2;
-        if (sortedStudents[mid].height >= minHeight)
+        for (int j = 0; j < m; j++)
         {
-            tallStudents.push_back(sortedStudents[mid].name);
-            int i = mid - 1;
-            while (i >= left && sortedStudents[i].height >= minHeight)
+            if (word[index] == board[i][j])
             {
-                tallStudents.push_back(sortedStudents[i].name);
-                i--;
+                // search using Backtracking
+                // if (search(index, i, j, board, word))
+                // {
+                //     return true;
+                // }
+
+                // search using Iterative
+                if (searchIterative(index, i, j, board, word))
+                {
+                    return true;
+                }
             }
-            i = mid + 1;
-            while (i <= right && sortedStudents[i].height >= minHeight)
-            {
-                tallStudents.push_back(sortedStudents[i].name);
-                i++;
-            }
-            break;
-        }
-        else if (sortedStudents[mid].height < minHeight)
-        {
-            left = mid + 1;
-        }
-        else
-        {
-            right = mid - 1;
         }
     }
-    cout << "Iteration = " << iteration << endl;
-    return tallStudents;
+    return ans;
 }
 
 int main()
 {
-    vector<Student> students;
-    string name;
-    double height;
+    vector<vector<char>> board = {
+        {'O', 'C', 'H', 'I', 'N', 'A', 'B', 'A', 'S', 'A', 'T', 'W', 'X'},
+        {'C', 'X', 'P', 'O', 'L', 'N', 'T', 'A', 'G', 'N', 'Q', 'I', 'S'},
+        {'S', 'K', 'C', 'F', 'D', 'S', 'A', 'G', 'P', 'W', 'U', 'V', 'P'},
+        {'F', 'X', 'H', 'O', 'U', 'F', 'M', 'J', 'O', 'K', 'G', 'L', 'A'},
+        {'B', 'Z', 'I', 'A', 'B', 'H', 'L', 'L', 'A', 'R', 'F', 'M', 'I'},
+        {'R', 'A', 'L', 'E', 'A', 'F', 'K', 'T', 'U', 'P', 'O', 'C', 'N'},
+        {'A', 'C', 'E', 'Z', 'I', 'G', 'Q', 'S', 'A', 'V', 'A', 'A', 'E'},
+        {'Z', 'A', 'X', 'E', 'B', 'A', 'I', 'I', 'R', 'A', 'Q', 'N', 'U'},
+        {'I', 'Y', 'H', 'G', 'W', 'I', 'S', 'T', 'A', 'C', 'T', 'A', 'R'},
+        {'L', 'P', 'P', 'U', 'A', 'Z', 'H', 'A', 'D', 'V', 'Y', 'D', 'P'},
+        {'T', 'O', 'K', 'H', 'O', 'X', 'L', 'L', 'Q', 'O', 'M', 'A', 'S'},
+        {'F', 'R', 'A', 'N', 'C', 'E', 'T', 'Y', 'J', 'Y', 'A', 'Y', 'A'},
+        {'Z', 'U', 'A', 'M', 'N', 'I', 'R', 'O', 'M', 'K', 'J', 'X', 'L'},
+    };
 
-    cout << "Enter student name and height (separated by a space), enter 'done' to finish:\n";
-    while (true)
+    cout << endl;
+    for (int i = 0; i < board.size(); i++)
     {
-        cin >> name;
-        if (name == "done")
-            break;
-        cin >> height;
-        students.push_back({name, height});
-    }
-
-    sortStudentsAndWriteToFile(students, "student.txt");
-
-    double minHeight = 5.0;
-
-    vector<string> tallStudentsLinear = findTallStudentsLinear(students, minHeight);
-
-    if (tallStudentsLinear.size() > 0)
-    {
-        cout << "The following student(s) have a height of " << minHeight << " feet or more (linear search):\n";
-        for (auto &student : tallStudentsLinear)
+        for (int j = 0; j < board[0].size(); j++)
         {
-            cout << student << "\n";
+            cout << board[i][j] << " ";
         }
+        cout << endl;
     }
-    else
-    {
-        cout << "No students have a height of " << minHeight << " feet or more (linear search).\n";
-    }
+    cout << endl;
 
-    vector<string> tallStudentsBinary = findTallStudentsBinary(students, minHeight);
+    string word = "ydev";
 
-    if (tallStudentsBinary.size() > 0)
-    {
-        cout << "The following student(s) have a height of " << minHeight << " feet or more (binary search):\n";
-        for (auto &student : tallStudentsBinary)
-        {
-            cout << student << "\n";
-        }
-    }
-    else
-    {
-        cout << "No students have a height of " << minHeight << " feet or more (linear search).\n";
-    }
+    // cout << exist(board, word) << endl;
     return 0;
 }
