@@ -37,52 +37,55 @@ bool search(int index, int i, int j, vector<vector<char>> &board, string word)
     return ans;
 }
 
-// Iterative search
-bool searchIterative(int index, int i, int j, vector<vector<char>> &board, string word)
+bool linearSearch(string word, vector<vector<char>> &board)
 {
-    // Get the dimensions of the board
     int m = board[0].size();
     int n = board.size();
+    int iter = 0;
 
-    // Create a stack to hold the indices to visit
-    stack<pair<int, int>> st;
-    st.push({i, j});
-
-    // While the stack is not empty
-    while (!st.empty())
+    for (int i = 0; i < n; i++)
     {
-        // Get the current indices
-        pair<int, int> curr = st.top();
-        st.pop();
-        i = curr.first;
-        j = curr.second;
+        for (int j = 0; j < m; j++)
+        {
+            iter++;
+            int k = 0;
+            while (k < word.size() && board[i][j + k] == word[k])
+                k++;
+            if (k == word.size())
+            {
+                cout << "Iteration = " << iter << endl;
+                return true;
+            }
 
-        // If all characters have been found, return true
-        if (index == word.size())
-        {
-            return true;
-        }
-        // If out of bounds, continue to the next iteration
-        if (i < 0 || j < 0 || i >= n || j >= m)
-        {
-            continue;
-        }
-        // If the current character doesn't match, continue to the next iteration
-        if (word[index] != board[i][j])
-        {
-            continue;
-        }
+            k = 0;
+            while (k < word.size() && board[i + k][j] == word[k])
+                k++;
+            if (k == word.size())
+            {
+                cout << "Iteration = " << iter << endl;
+                return true;
+            }
 
-        // Mark the character as visited and push the adjacent indices to the stack
-        board[i][j] = '*';
-        st.push({i + 1, j});
-        st.push({i, j + 1});
-        st.push({i - 1, j});
-        st.push({i, j - 1});
-        index++;
+            k = 0;
+            while (k < word.size() && i + k < n && j + k < m && board[i + k][j + k] == word[k])
+                k++;
+            if (k == word.size())
+            {
+                cout << "Iteration = " << iter << endl;
+                return true;
+            }
+
+            k = 0;
+            while (k < word.size() && i + k < n && j - k >= 0 && board[i + k][j - k] == word[k])
+                k++;
+            if (k == word.size())
+            {
+                cout << "Iteration = " << iter << endl;
+                return true;
+            }
+        }
     }
-
-    // If all characters have not been found, return false
+    cout << "Iteration = " << iter << endl;
     return false;
 }
 
@@ -92,11 +95,13 @@ vector<int> exist(vector<vector<char>> &board, string word)
     int n = board.size();
     int index = 0;
     vector<int> ans;
+    int iter = 0;
 
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < m; j++)
         {
+            iter++;
             if (word[index] == board[i][j])
             {
                 // search using Backtracking
@@ -107,18 +112,10 @@ vector<int> exist(vector<vector<char>> &board, string word)
                     ans.push_back(j);
                     break;
                 }
-
-                // search using Iterative
-                // if (searchIterative(index, i, j, board, word))
-                // {
-                //     // return true;
-                //     ans.push_back(i);
-                //     ans.push_back(j);
-                //     break;
-                // }
             }
         }
     }
+    cout << "Iteration = " << iter << endl;
     return ans;
 }
 
@@ -162,33 +159,66 @@ int main()
     cout << "Total 12 Country Name Present" << endl;
     cout << endl;
 
-    string word;
+    cout << "1. Backtracking" << endl;
+    cout << "2. Linear Search" << endl;
+    int choice;
+    cin >> choice;
 
+    string word;
     while (1)
     {
-        cout << endl;
-        cout << "Enter Word that you want to search in Grid (type 'done' to EXIT)" << endl;
-        cin >> word;
-        if(word == "done" || word == "DONE")
+        if (choice == 1)
         {
-            break;
+            cout << endl;
+            cout << "Enter Word that you want to search in Grid (type 'done' to EXIT)" << endl;
+            cin >> word;
+            if (word == "done" || word == "DONE")
+            {
+                break;
+            }
+
+            vector<int> ans = exist(board, word);
+
+            if (ans.empty())
+            {
+                cout << endl
+                     << "** Not found **" << endl;
+            }
+            else
+            {
+                ++points;
+                cout << endl;
+                cout << "--> Index of Row and Column respectivly ";
+                for (int i : ans)
+                {
+                    cout << i << " ";
+                }
+                cout << endl;
+                cout << "Points : " << points << endl;
+            }
         }
-        vector<int> ans = exist(board, word);
-        if (ans.empty())
+        else if (choice == 2)
         {
-            cout << endl << "** Not found **" << endl;
+            cout << endl;
+            cout << "Enter Word that you want to search in Grid (type 'done' to EXIT)" << endl;
+            cin >> word;
+            if (word == "done" || word == "DONE")
+            {
+                break;
+            }
+            bool found = linearSearch(word, board);
+            if (found)
+            {
+                cout << "Present" << endl;
+            }
+            else
+            {
+                cout << "Absent" << endl;
+            }
         }
         else
         {
-            ++points;
-            cout << endl;
-            cout << "--> Index of Row and Column respectivly ";
-            for (int i : ans)
-            {
-                cout << i << " ";
-            }
-            cout << endl;
-            cout << "Points : " << points << endl;
+            cout << "Enter Valid Input" << endl;
         }
     }
 
@@ -205,5 +235,6 @@ int main()
     cout << "10. KUWATT" << endl;
     cout << "11. RUSSIA" << endl;
     cout << "12. JAPAN" << endl;
+
     return 0;
 }
