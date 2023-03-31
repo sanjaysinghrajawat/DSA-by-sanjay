@@ -34,7 +34,6 @@ bool search(int index, int i, int j, vector<vector<char>> &board, string word)
         board[i][j] = word[index];
     }
 
-    // Return ans
     return ans;
 }
 
@@ -87,12 +86,12 @@ bool searchIterative(int index, int i, int j, vector<vector<char>> &board, strin
     return false;
 }
 
-bool exist(vector<vector<char>> &board, string word)
+vector<int> exist(vector<vector<char>> &board, string word)
 {
     int m = board[0].size();
     int n = board.size();
     int index = 0;
-    bool ans = false;
+    vector<int> ans;
 
     for (int i = 0; i < n; i++)
     {
@@ -101,16 +100,22 @@ bool exist(vector<vector<char>> &board, string word)
             if (word[index] == board[i][j])
             {
                 // search using Backtracking
-                // if (search(index, i, j, board, word))
-                // {
-                //     return true;
-                // }
+                if (search(index, i, j, board, word))
+                {
+                    // return true;
+                    ans.push_back(i);
+                    ans.push_back(j);
+                    break;
+                }
 
                 // search using Iterative
-                if (searchIterative(index, i, j, board, word))
-                {
-                    return true;
-                }
+                // if (searchIterative(index, i, j, board, word))
+                // {
+                //     // return true;
+                //     ans.push_back(i);
+                //     ans.push_back(j);
+                //     break;
+                // }
             }
         }
     }
@@ -119,6 +124,8 @@ bool exist(vector<vector<char>> &board, string word)
 
 int main()
 {
+    int points = 0;
+
     vector<vector<char>> board = {
         {'O', 'C', 'H', 'I', 'N', 'A', 'B', 'A', 'S', 'A', 'T', 'W', 'X'},
         {'C', 'X', 'P', 'O', 'L', 'N', 'T', 'A', 'G', 'N', 'Q', 'I', 'S'},
@@ -147,11 +154,56 @@ int main()
     }
     cout << "---------------------------------------------------" << endl;
     cout << endl;
+    cout << endl;
+
+    cout << "----- WORD PUZZLE -----" << endl;
+    cout << "* Find Country Name" << endl
+         << endl;
+    cout << "Total 12 Country Name Present" << endl;
+    cout << endl;
 
     string word;
-    cout << "Enter Word that you want to search in Grid" << endl;
-    cin >> word;
 
-    // cout << exist(board, word) << endl;
+    while (1)
+    {
+        cout << endl;
+        cout << "Enter Word that you want to search in Grid (type 'done' to EXIT)" << endl;
+        cin >> word;
+        if(word == "done" || word == "DONE")
+        {
+            break;
+        }
+        vector<int> ans = exist(board, word);
+        if (ans.empty())
+        {
+            cout << endl << "** Not found **" << endl;
+        }
+        else
+        {
+            ++points;
+            cout << endl;
+            cout << "--> Index of Row and Column respectivly ";
+            for (int i : ans)
+            {
+                cout << i << " ";
+            }
+            cout << endl;
+            cout << "Points : " << points << endl;
+        }
+    }
+
+    cout << "-- Country Name --" << endl;
+    cout << "1. SPAIN" << endl;
+    cout << "2. ITALY" << endl;
+    cout << "3. BRAZIL" << endl;
+    cout << "4. DUBAI" << endl;
+    cout << "5. CANADA" << endl;
+    cout << "6. CHILE" << endl;
+    cout << "7. IRAQ" << endl;
+    cout << "8. CHINA" << endl;
+    cout << "9. FRANCE" << endl;
+    cout << "10. KUWATT" << endl;
+    cout << "11. RUSSIA" << endl;
+    cout << "12. JAPAN" << endl;
     return 0;
 }
