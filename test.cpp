@@ -219,6 +219,7 @@ int main()
         else
         {
             cout << "Enter Valid Input" << endl;
+            break;
         }
     }
 
